@@ -5,7 +5,7 @@ use crate::error::CipherError;
 
 pub fn key_and_iv(password: &[u8], salt: &[u8]) -> Result<(Vec<u8>, Vec<u8>), CipherError> {
     let mut out = [0u8; 48];
-    pbkdf2::<Hmac<Sha256>>(password, salt, 10000, &mut out).map_err(|e| CipherError::InvalidLength(e))?;
+    pbkdf2::<Hmac<Sha256>>(password, salt, 10000, &mut out).map_err(CipherError::InvalidLength)?;
     Ok((out[0..32].to_vec(), out[32..48].to_vec()))
 }
 

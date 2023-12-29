@@ -9,13 +9,14 @@ use base64::engine::general_purpose::STANDARD;
 
 const SALTED_MAGIC: &[u8] = b"Salted__";
 
-pub fn decrypt_str(ciphertext: &str, key: &str) -> Result<String, CipherError> {
+#[allow(dead_code)]
+pub fn decrypt(ciphertext: &str, key: &str) -> Result<String, CipherError> {
     STANDARD.decode(ciphertext.as_bytes())
-        .map_err(|e| CipherError::InvalidBase64Encoding(e))
-        .and_then(|v| decrypt(&v, key))
+        .map_err(CipherError::InvalidBase64Encoding)
+        .and_then(|v| decrypt_internal(&v, key))
 }
 
-pub fn decrypt(ciphertext: &[u8], key: &str) -> Result<String, CipherError> {
+pub fn decrypt_internal(ciphertext: &[u8], key: &str) -> Result<String, CipherError> {
     if ciphertext.len() < 16 {
         return Err(CipherError::CipherTextIsTooShort());
     }
@@ -26,11 +27,19 @@ pub fn decrypt(ciphertext: &[u8], key: &str) -> Result<String, CipherError> {
     let (salt, rest) = rest.split_at(8);
     let (key, iv) = key_and_iv(key.as_bytes(), salt)?;
     let cipher = cbc::Decryptor::<aes::Aes256>::new_from_slices(&key, &iv)?;
-    let res = cipher.decrypt_padded_vec_mut::<Pkcs7>(rest).map_err(|e| CipherError::InvalidKey(e))?;
-    Ok(String::from_utf8(res).map_err(|e| CipherError::InvalidUtf8Encoding(e))?)
+    let res = cipher.decrypt_padded_vec_mut::<Pkcs7>(rest).map_err(CipherError::InvalidKey)?;
+    String::from_utf8(res).map_err(CipherError::InvalidUtf8Encoding)
 }
 
+
+
+#[allow(dead_code)]
 pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError>  {
+    let message = encrypt_raw(plaintext, key)?;
+    Ok(STANDARD.encode(message))
+}
+
+pub fn encrypt_raw(plaintext: &str, key: &str) -> Result<Vec<u8>, CipherError> {
     let salt: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(8)
@@ -40,8 +49,7 @@ pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError>  {
     let cipher = cbc::Encryptor::<aes::Aes256>::new_from_slices(&key, &iv)?;
     let plaintext = plaintext.as_bytes().to_vec();
     let ciphertext = cipher.encrypt_padded_vec_mut::<Pkcs7>(&plaintext);
-    let message = [SALTED_MAGIC, salt.as_bytes(), &ciphertext].concat();
-    Ok(STANDARD.encode(message))
+    Ok([SALTED_MAGIC, salt.as_bytes(), &ciphertext].concat())
 }
 
 #[cfg(test)]
@@ -53,16 +61,19 @@ mod test {
         let key = "password";
         let plaintext = "Hello, world!";
         let ciphertext = encrypt(plaintext, key).unwrap();
-        let decrypted = decrypt_str(&ciphertext, key).unwrap();
+        let decrypted = decrypt(&ciphertext, key).unwrap();
         assert_eq!(plaintext, decrypted);
     }
 
     #[test]
     fn test_decrypt() {
         let password = "test";
-        // echo U2FsdGVkX19GqvuF+PkB8Pm7rCELUHdj/SxpgdBgwSU= | openssl aes-256-cbc -pbkdf2 -d -base64 -md sha256 -pass pass:test
-        let encrypted = "U2FsdGVkX19GqvuF+PkB8Pm7rCELUHdj/SxpgdBgwSU=";
-        let decrypted = decrypt_str(encrypted, password).unwrap();
+        // generate:
+        //   echo -n test | openssl aes-256-cbc -pbkdf2 -base64 -md sha256 -pass pass:test
+        // decrypt:
+        //   echo U2FsdGVkX19GqvuF+PkB8Pm7rCELUHdj/SxpgdBgwSU= | openssl aes-256-cbc -pbkdf2 -d -base64 -md sha256 -pass pass:test
+        let encrypted = "U2FsdGVkX18OtYlc5sMYSNdZ8zUWhACPqYSSwVuPSPA=";
+        let decrypted = decrypt(encrypted, password).unwrap();
         assert_eq!(decrypted, "test");
     }
 }
