@@ -1,6 +1,6 @@
-use std::string::FromUtf8Error;
 use aes::cipher::block_padding::UnpadError;
 use hmac::digest::InvalidLength;
+use std::string::FromUtf8Error;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

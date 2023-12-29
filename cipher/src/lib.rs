@@ -1,6 +1,6 @@
-mod pbkdf2;
-mod error;
 mod aes;
+mod error;
+mod pbkdf2;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right

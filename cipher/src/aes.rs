@@ -1,17 +1,18 @@
 use crate::error::CipherError;
 use crate::pbkdf2::key_and_iv;
 use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
+use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use cbc::cipher::block_padding::Pkcs7;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
-use base64::engine::general_purpose::STANDARD;
 
 const SALTED_MAGIC: &[u8] = b"Salted__";
 
 #[allow(dead_code)]
 pub fn decrypt(ciphertext: &str, key: &str) -> Result<String, CipherError> {
-    STANDARD.decode(ciphertext.as_bytes())
+    STANDARD
+        .decode(ciphertext.as_bytes())
         .map_err(CipherError::InvalidBase64Encoding)
         .and_then(|v| decrypt_internal(&v, key))
 }
@@ -27,14 +28,14 @@ pub fn decrypt_internal(ciphertext: &[u8], key: &str) -> Result<String, CipherEr
     let (salt, rest) = rest.split_at(8);
     let (key, iv) = key_and_iv(key.as_bytes(), salt)?;
     let cipher = cbc::Decryptor::<aes::Aes256>::new_from_slices(&key, &iv)?;
-    let res = cipher.decrypt_padded_vec_mut::<Pkcs7>(rest).map_err(CipherError::InvalidKey)?;
+    let res = cipher
+        .decrypt_padded_vec_mut::<Pkcs7>(rest)
+        .map_err(CipherError::InvalidKey)?;
     String::from_utf8(res).map_err(CipherError::InvalidUtf8Encoding)
 }
 
-
-
 #[allow(dead_code)]
-pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError>  {
+pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError> {
     let message = encrypt_raw(plaintext, key)?;
     Ok(STANDARD.encode(message))
 }
