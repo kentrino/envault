@@ -1,7 +1,7 @@
 use crate::error::CipherError;
 use crate::pbkdf2::key_and_iv;
 use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
-use base64::engine::general_purpose::STANDARD;
+use base64::engine::general_purpose::STANDARD as base64;
 use base64::Engine;
 use cbc::cipher::block_padding::Pkcs7;
 use rand::distributions::Alphanumeric;
@@ -11,13 +11,13 @@ const SALTED_MAGIC: &[u8] = b"Salted__";
 
 #[allow(dead_code)]
 pub fn decrypt(ciphertext: &str, key: &str) -> Result<String, CipherError> {
-    STANDARD
+    base64
         .decode(ciphertext.as_bytes())
         .map_err(CipherError::InvalidBase64Encoding)
-        .and_then(|v| decrypt_internal(&v, key))
+        .and_then(|v| decrypt_bytes(&v, key))
 }
 
-pub fn decrypt_internal(ciphertext: &[u8], key: &str) -> Result<String, CipherError> {
+pub fn decrypt_bytes(ciphertext: &[u8], key: &str) -> Result<String, CipherError> {
     if ciphertext.len() < 16 {
         return Err(CipherError::CipherTextIsTooShort());
     }
@@ -36,11 +36,11 @@ pub fn decrypt_internal(ciphertext: &[u8], key: &str) -> Result<String, CipherEr
 
 #[allow(dead_code)]
 pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError> {
-    let message = encrypt_raw(plaintext, key)?;
-    Ok(STANDARD.encode(message))
+    let message = encrypt_bytes(plaintext, key)?;
+    Ok(base64.encode(message))
 }
 
-pub fn encrypt_raw(plaintext: &str, key: &str) -> Result<Vec<u8>, CipherError> {
+pub fn encrypt_bytes(plaintext: &str, key: &str) -> Result<Vec<u8>, CipherError> {
     let salt: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(8)
