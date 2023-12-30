@@ -62,8 +62,20 @@ mod tests {
 
     #[test]
     fn test_config() {
-        let v = vec![("prd", "a", "value")];
-        let mut config = Config::new(None, Some(File::new(to_hash_map(v))));
+        std::env::set_var("ENV_KEY__prd__a", "password");
+        let old = vec![("prd", "a", "old_value")];
+        let new = vec![("prd", "a", "new_value")];
+        let mut config = Config::new(Some(File::new(to_hash_map(old))), Some(File::new(to_hash_map(new))));
+        config
+            .encoded
+            .clone()
+            .unwrap()
+            .iter()
+            .for_each(|(env, key, value)| {
+                assert_eq!(env, "prd");
+                assert_eq!(key, "a");
+                assert_eq!(value, "old_value");
+            });
         config
             .apply(&mut rand_chacha::ChaCha8Rng::seed_from_u64(10))
             .unwrap();
@@ -74,7 +86,7 @@ mod tests {
             .for_each(|(env, key, value)| {
                 assert_eq!(env, "prd");
                 assert_eq!(key, "a");
-                assert_eq!(value, "U2FsdGVkX19Wak5BUmlqM04A8AlMlr/bmc1sdBfgbag=");
+                assert_eq!(value, "U2FsdGVkX19Wak5BUmlqM6K9BRN7rxlC2+NUsA+Qo4k=");
             });
     }
 

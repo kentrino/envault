@@ -66,6 +66,7 @@ pub fn encrypt_bytes<R: Rng>(
 mod test {
     use super::*;
     use rand::thread_rng;
+    use rand_chacha::rand_core::SeedableRng;
 
     #[test]
     fn test_encrypt_decrypt() {

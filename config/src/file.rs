@@ -2,6 +2,7 @@ use crate::error::ConfigError;
 use std::collections::HashMap;
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct File {
     path: String,
     data: HashMap<String, HashMap<String, String>>,
