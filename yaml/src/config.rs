@@ -9,7 +9,7 @@ struct Config {
     pub encoded: Option<File>,
     pub decoded: Option<File>,
 }
-
+#[allow(dead_code)]
 impl Config {
     fn new(encoded: Option<File>, decoded: Option<File>) -> Self {
         Config { encoded, decoded }

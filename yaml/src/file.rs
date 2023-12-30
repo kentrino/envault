@@ -1,11 +1,13 @@
 use std::collections::HashMap;
 use crate::error::ConfigError;
 
+#[allow(dead_code)]
 pub struct File {
     path: String,
     data: HashMap<String, HashMap<String, String>>,
 }
 
+#[allow(dead_code)]
 impl File {
     pub fn new(data: HashMap<String, HashMap<String, String>>) -> Self {
         File { path: "".to_string(), data, }
@@ -29,7 +31,7 @@ impl File {
 
     pub fn load(path: &str) -> Result<Self, ConfigError> {
         let file = std::fs::File::open(path).unwrap();
-        let data: HashMap<String, HashMap<String, String>> = serde_yaml::from_reader(file).map_err(|e| ConfigError::YamlParseFailed(e))?;
+        let data: HashMap<String, HashMap<String, String>> = serde_yaml::from_reader(file).map_err(ConfigError::YamlParseFailed)?;
         Ok(File {
             path: path.to_string(),
             data,
