@@ -45,10 +45,6 @@ pub fn encrypt_bytes<R: Rng>(
     key: &str,
     rng: &mut R,
 ) -> Result<Vec<u8>, CipherError> {
-    // #[cfg(not(test))]
-    // let rng = rand::thread_rng();
-    // #[cfg(test)]
-    // let rng = rand_chacha::ChaCha8Rng::seed_from_u64(10);
     let salt: String = rng
         .sample_iter(&Alphanumeric)
         .take(8)
@@ -81,8 +77,6 @@ mod test {
     fn test_encrypt() {
         let password = "test";
         let plaintext = "test";
-        let rng = rand_chacha::ChaCha8Rng::seed_from_u64(10);
-        let iter = rng.sample_iter(&Alphanumeric);
         let encrypted = encrypt(
             plaintext,
             password,
