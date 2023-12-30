@@ -10,9 +10,7 @@ pub struct File {
 #[allow(dead_code)]
 impl File {
     pub fn new(data: HashMap<String, HashMap<String, String>>) -> Self {
-        File {
-            data,
-        }
+        File { data }
     }
 
     pub fn for_each(&self, f: impl Fn(&str, &str, &str)) {
@@ -34,9 +32,7 @@ impl File {
         let file = std::fs::File::open(path).unwrap();
         let data: HashMap<String, HashMap<String, String>> =
             serde_yaml::from_reader(file).map_err(ConfigError::YamlParseFailed)?;
-        Ok(File {
-            data,
-        })
+        Ok(File { data })
     }
 
     pub fn save(&self, path: &str) -> Result<(), ConfigError> {
