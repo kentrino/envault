@@ -1,7 +1,7 @@
 use crate::env::key_for;
 use crate::error::ConfigError;
 use crate::file::File;
-use cipher::aes::encrypt;
+use cipher::aes::{decrypt, encrypt};
 use rand::Rng;
 use std::collections::HashMap;
 
@@ -37,10 +37,23 @@ impl Config {
         }
     }
 
+    fn export(&self, env: &str) -> Result<String, ConfigError> {
+        let mut result = String::new();
+        if let Some(decoded) = &self.decoded {
+            for (_env, key, value) in decoded.iter() {
+                if env == _env {
+                    let password = key_for(_env, key)?;
+                    result.push_str(&format!("export {}={};", key, decrypt(value, &password)?));
+                }
+            }
+        }
+        Ok(result)
+    }
+
     fn apply<R: Rng>(&mut self, rng: &mut R) -> Result<(), ConfigError> {
         if let Some(decoded) = &self.decoded {
             for (env, key, value) in decoded.iter() {
-                let password = key_for(env, key).ok_or(ConfigError::KeyNotFound)?;
+                let password = key_for(env, key)?;
                 let encrypted = encrypt(value, &password, rng)?;
                 match &mut self.encoded {
                     Some(ref mut encoded) => {
@@ -96,6 +109,19 @@ mod tests {
                 assert_eq!(key, "a");
                 assert_eq!(value, "U2FsdGVkX19Wak5BUmlqM6K9BRN7rxlC2+NUsA+Qo4k=");
             });
+    }
+
+    #[test]
+    fn test_export() {
+        std::env::set_var("ENV_KEY__prd__a", "password");
+        let new = vec![("prd", "a", "U2FsdGVkX19Wak5BUmlqM6K9BRN7rxlC2+NUsA+Qo4k=")];
+        let mut config = Config::new(
+            None,
+            Some(File::new(to_hash_map(new))),
+        );
+        let res = config
+            .export("prd").unwrap();
+        assert_eq!(res, "export a=new_value;");
     }
 
     fn to_hash_map(v: Vec<(&str, &str, &str)>) -> HashMap<String, HashMap<String, String>> {
