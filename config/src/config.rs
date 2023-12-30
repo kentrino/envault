@@ -65,7 +65,10 @@ mod tests {
         std::env::set_var("ENV_KEY__prd__a", "password");
         let old = vec![("prd", "a", "old_value")];
         let new = vec![("prd", "a", "new_value")];
-        let mut config = Config::new(Some(File::new(to_hash_map(old))), Some(File::new(to_hash_map(new))));
+        let mut config = Config::new(
+            Some(File::new(to_hash_map(old))),
+            Some(File::new(to_hash_map(new))),
+        );
         config
             .encoded
             .clone()
