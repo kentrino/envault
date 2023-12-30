@@ -4,7 +4,6 @@ use std::collections::HashMap;
 #[allow(dead_code)]
 #[derive(Clone)]
 pub struct File {
-    path: String,
     data: HashMap<String, HashMap<String, String>>,
 }
 
@@ -12,7 +11,6 @@ pub struct File {
 impl File {
     pub fn new(data: HashMap<String, HashMap<String, String>>) -> Self {
         File {
-            path: "".to_string(),
             data,
         }
     }
@@ -37,14 +35,14 @@ impl File {
         let data: HashMap<String, HashMap<String, String>> =
             serde_yaml::from_reader(file).map_err(ConfigError::YamlParseFailed)?;
         Ok(File {
-            path: path.to_string(),
             data,
         })
     }
 
-    fn save(&self) {
-        let file = std::fs::File::create(&self.path).unwrap();
-        serde_yaml::to_writer(file, &self.data).unwrap();
+    pub fn save(&self, path: &str) -> Result<(), ConfigError> {
+        let file = std::fs::File::create(path)?;
+        serde_yaml::to_writer(file, &self.data)?;
+        Ok(())
     }
 
     pub fn set(&mut self, env: &str, key: &str, value: &str) {

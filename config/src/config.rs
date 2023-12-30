@@ -28,8 +28,13 @@ impl Config {
         })
     }
 
-    fn save() {
-        // save encoded file to encoded_path
+    fn save(&self, encoded_path: &str) -> Result<(), ConfigError> {
+        if let Some(encoded) = &self.encoded {
+            encoded.save(encoded_path)?;
+            Ok(())
+        } else {
+            Err(ConfigError::IllegalState)
+        }
     }
 
     fn apply<R: Rng>(&mut self, rng: &mut R) -> Result<(), ConfigError> {

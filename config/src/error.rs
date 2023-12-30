@@ -10,4 +10,10 @@ pub enum ConfigError {
 
     #[error("Cipher error")]
     CipherError(#[from] cipher::error::CipherError),
+
+    #[error("Illegal state")]
+    IllegalState,
+
+    #[error("IO error")]
+    FileSaveError(#[from] std::io::Error),
 }
