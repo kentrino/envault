@@ -2,8 +2,8 @@ use crate::env::key_for;
 use crate::error::ConfigError;
 use crate::file::File;
 use cipher::aes::encrypt;
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 struct Config {
     pub encoded: Option<File>,
@@ -57,19 +57,25 @@ impl Config {
 
 #[cfg(test)]
 mod tests {
-    use rand_chacha::rand_core::SeedableRng;
     use super::*;
+    use rand_chacha::rand_core::SeedableRng;
 
     #[test]
     fn test_config() {
         let v = vec![("prd", "a", "value")];
         let mut config = Config::new(None, Some(File::new(to_hash_map(v))));
-        config.apply(&mut rand_chacha::ChaCha8Rng::seed_from_u64(10)).unwrap();
-        config.encoded.unwrap().iter().for_each(|(env, key, value)| {
-            assert_eq!(env, "prd");
-            assert_eq!(key, "a");
-            assert_eq!(value, "U2FsdGVkX19Wak5BUmlqM04A8AlMlr/bmc1sdBfgbag=");
-        });
+        config
+            .apply(&mut rand_chacha::ChaCha8Rng::seed_from_u64(10))
+            .unwrap();
+        config
+            .encoded
+            .unwrap()
+            .iter()
+            .for_each(|(env, key, value)| {
+                assert_eq!(env, "prd");
+                assert_eq!(key, "a");
+                assert_eq!(value, "U2FsdGVkX19Wak5BUmlqM04A8AlMlr/bmc1sdBfgbag=");
+            });
     }
 
     fn to_hash_map(v: Vec<(&str, &str, &str)>) -> HashMap<String, HashMap<String, String>> {

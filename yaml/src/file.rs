@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::error::ConfigError;
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 pub struct File {
@@ -10,7 +10,10 @@ pub struct File {
 #[allow(dead_code)]
 impl File {
     pub fn new(data: HashMap<String, HashMap<String, String>>) -> Self {
-        File { path: "".to_string(), data, }
+        File {
+            path: "".to_string(),
+            data,
+        }
     }
 
     pub fn for_each(&self, f: impl Fn(&str, &str, &str)) {
@@ -23,15 +26,15 @@ impl File {
 
     pub fn iter(&self) -> impl Iterator<Item = (&str, &str, &str)> {
         self.data.iter().flat_map(|(env, keys)| {
-            keys.iter().map(move |(key, value)| {
-                (env.as_str(), key.as_str(), value.as_str())
-            })
+            keys.iter()
+                .map(move |(key, value)| (env.as_str(), key.as_str(), value.as_str()))
         })
     }
 
     pub fn load(path: &str) -> Result<Self, ConfigError> {
         let file = std::fs::File::open(path).unwrap();
-        let data: HashMap<String, HashMap<String, String>> = serde_yaml::from_reader(file).map_err(ConfigError::YamlParseFailed)?;
+        let data: HashMap<String, HashMap<String, String>> =
+            serde_yaml::from_reader(file).map_err(ConfigError::YamlParseFailed)?;
         Ok(File {
             path: path.to_string(),
             data,

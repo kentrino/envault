@@ -1,5 +1,3 @@
-
-
 use crate::error::CipherError;
 use crate::pbkdf2::key_and_iv;
 use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
@@ -8,7 +6,6 @@ use base64::Engine;
 use cbc::cipher::block_padding::Pkcs7;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
-
 
 const SALTED_MAGIC: &[u8] = b"Salted__";
 
@@ -43,16 +40,20 @@ pub fn encrypt<R: Rng>(plaintext: &str, key: &str, rng: &mut R) -> Result<String
     Ok(base64.encode(message))
 }
 
-pub fn encrypt_bytes<R: Rng>(plaintext: &str, key: &str, rng: &mut R) -> Result<Vec<u8>, CipherError> {
+pub fn encrypt_bytes<R: Rng>(
+    plaintext: &str,
+    key: &str,
+    rng: &mut R,
+) -> Result<Vec<u8>, CipherError> {
     // #[cfg(not(test))]
     // let rng = rand::thread_rng();
     // #[cfg(test)]
     // let rng = rand_chacha::ChaCha8Rng::seed_from_u64(10);
     let salt: String = rng
-            .sample_iter(&Alphanumeric)
-                .take(8)
-                .map(char::from)
-                .collect();
+        .sample_iter(&Alphanumeric)
+        .take(8)
+        .map(char::from)
+        .collect();
 
     let (key, iv) = key_and_iv(key.as_bytes(), salt.as_bytes())?;
     let cipher = cbc::Encryptor::<aes::Aes256>::new_from_slices(&key, &iv)?;
@@ -63,8 +64,8 @@ pub fn encrypt_bytes<R: Rng>(plaintext: &str, key: &str, rng: &mut R) -> Result<
 
 #[cfg(test)]
 mod test {
-    use rand::thread_rng;
     use super::*;
+    use rand::thread_rng;
 
     #[test]
     fn test_encrypt_decrypt() {
@@ -81,7 +82,12 @@ mod test {
         let plaintext = "test";
         let rng = rand_chacha::ChaCha8Rng::seed_from_u64(10);
         let iter = rng.sample_iter(&Alphanumeric);
-        let encrypted = encrypt(plaintext, password, &mut rand_chacha::ChaCha8Rng::seed_from_u64(10)).unwrap();
+        let encrypted = encrypt(
+            plaintext,
+            password,
+            &mut rand_chacha::ChaCha8Rng::seed_from_u64(10),
+        )
+        .unwrap();
         assert_eq!(encrypted, "U2FsdGVkX19Wak5BUmlqMxLr7IxaMTjyOObe/snFRY4=");
     }
 
