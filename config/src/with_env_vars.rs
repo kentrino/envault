@@ -1,22 +1,20 @@
-#![allow(unused_imports,dead_code)]
-use std::sync::Mutex;
+#![allow(unused_imports, dead_code)]
 use once_cell::sync::Lazy;
 use std::env::VarError;
+use std::sync::Mutex;
 
-use std::{env, panic};
 use std::panic::{RefUnwindSafe, UnwindSafe};
+use std::{env, panic};
 
-static SERIAL_TEST_GUARD: Lazy<Mutex<()>> = Lazy::new(|| {
-    Mutex::new(())
-});
+static SERIAL_TEST_GUARD: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
 
 /// Sets environment variables to the given value for the duration of the closure.
 /// Restores the previous values when the closure completes or panics, before unwinding the panic.
 /// cf. https://stackoverflow.com/questions/35858323/how-can-i-test-rust-methods-that-depend-on-environment-variables
 #[cfg(test)]
 pub fn with_env_vars<F>(kvs: Vec<(&str, Option<&str>)>, closure: F)
-    where
-        F: Fn() + UnwindSafe + RefUnwindSafe,
+where
+    F: Fn() + UnwindSafe + RefUnwindSafe,
 {
     let guard = SERIAL_TEST_GUARD.lock().unwrap();
     let mut old_kvs: Vec<(&str, Result<String, VarError>)> = Vec::new();

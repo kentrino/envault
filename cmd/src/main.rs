@@ -1,12 +1,11 @@
-use std::process::exit;
 use clap::{Parser, Subcommand};
-
+use std::process::exit;
 
 #[derive(Parser)]
 #[command()]
 pub struct Cli {
     #[command(subcommand)]
-    command: Option<Commands>
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
@@ -14,8 +13,8 @@ enum Commands {
     /// export env
     Export {
         #[arg(short, long, help = "Environment name")]
-        env: String
-    }
+        env: String,
+    },
 }
 
 fn main() {
