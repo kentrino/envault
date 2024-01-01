@@ -9,7 +9,6 @@ use rand::Rng;
 
 const SALTED_MAGIC: &[u8] = b"Salted__";
 
-#[allow(dead_code)]
 pub fn decrypt(ciphertext: &str, key: &str) -> Result<String, CipherError> {
     base64
         .decode(ciphertext.as_bytes())
@@ -34,7 +33,6 @@ pub fn decrypt_bytes(ciphertext: &[u8], key: &str) -> Result<String, CipherError
     String::from_utf8(res).map_err(CipherError::InvalidUtf8Encoding)
 }
 
-#[allow(dead_code)]
 pub fn encrypt<R: Rng>(plaintext: &str, key: &str, rng: &mut R) -> Result<String, CipherError> {
     let message = encrypt_bytes(plaintext, key, rng)?;
     Ok(base64.encode(message))
