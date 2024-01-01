@@ -1,8 +1,10 @@
+#![allow(unused_imports,dead_code)]
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use std::env::VarError;
-use std::panic::{RefUnwindSafe, UnwindSafe};
+
 use std::{env, panic};
+use std::panic::{RefUnwindSafe, UnwindSafe};
 
 static SERIAL_TEST_GUARD: Lazy<Mutex<()>> = Lazy::new(|| {
     Mutex::new(())

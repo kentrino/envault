@@ -4,15 +4,13 @@ const PREFIX: &str = "ENV_KEY";
 
 
 pub fn key_for(_env: &str, _key: &str) -> Result<String, ConfigError> {
-    match std::env::var(PREFIX.to_string() + "__" + _env + "__" + _key) {
-        Ok(value) => return Ok(value),
-        Err(_) => (),
+    if let Ok(value) = std::env::var(PREFIX.to_string() + "__" + _env + "__" + _key) {
+        return Ok(value)
     }
-    match std::env::var(PREFIX.to_string() + "__" + _env) {
-        Ok(value) => return Ok(value),
-        Err(_) => (),
+    if let Ok(value) = std::env::var(PREFIX.to_string() + "__" + _env) {
+        return Ok(value)
     }
-    match std::env::var(PREFIX.to_string()) {
+    match std::env::var(PREFIX) {
         Ok(value) => Ok(value),
         Err(_) => Err(ConfigError::KeyNotFound),
     }
