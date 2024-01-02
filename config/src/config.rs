@@ -17,8 +17,8 @@ impl Config {
     }
 
     pub fn load(
-        encoded_path: Option<String>,
-        decoded_path: Option<String>,
+        encoded_path: Option<&str>,
+        decoded_path: Option<&str>,
     ) -> Result<Self, ConfigError> {
         Ok(Config {
             encoded: match encoded_path {
