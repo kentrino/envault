@@ -21,7 +21,7 @@ enum Commands {
         #[arg(short = 'c', long = "enc", help = "Encrypted file")]
         enc: String,
     },
-    #[command(about = "encrypt environment variable", name = "enc")]
+    #[command(about = "encrypt environment variable", name = "encrypt")]
     Encrypt {
         #[arg(short, long, help = "Environment name")]
         env: Option<String>,
