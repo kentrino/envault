@@ -22,11 +22,11 @@ impl Config {
     ) -> Result<Self, ConfigError> {
         Ok(Config {
             encoded: match encoded_path {
-                Some(path) => Some(File::load(&path)?),
+                Some(path) => Some(File::load(path)?),
                 None => None,
             },
             decoded: match decoded_path {
-                Some(path) => Some(File::load(&path)?),
+                Some(path) => Some(File::load(path)?),
                 None => None,
             },
         })

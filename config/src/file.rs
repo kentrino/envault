@@ -45,7 +45,6 @@ impl File {
         match self.data.get_mut(env) {
             Some(hm) => {
                 hm.insert(key.to_string(), value.to_string());
-                return;
             }
             None => {
                 let mut hm = HashMap::new();
