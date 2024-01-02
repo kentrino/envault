@@ -30,8 +30,7 @@ impl File {
 
     pub fn load(path: &str) -> Result<Self, ConfigError> {
         let file = std::fs::File::open(path)?;
-        let data: HashMap<String, HashMap<String, String>> =
-            serde_yaml::from_reader(file)?;
+        let data: HashMap<String, HashMap<String, String>> = serde_yaml::from_reader(file)?;
         Ok(File { data })
     }
 
