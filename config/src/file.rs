@@ -42,7 +42,16 @@ impl File {
     }
 
     pub fn set(&mut self, env: &str, key: &str, value: &str) {
-        let hm: &mut HashMap<String, String> = self.data.get_mut(env).unwrap();
-        hm.insert(key.to_string(), value.to_string());
+        match self.data.get_mut(env) {
+            Some(hm) => {
+                hm.insert(key.to_string(), value.to_string());
+                return;
+            }
+            None => {
+                let mut hm = HashMap::new();
+                hm.insert(key.to_string(), value.to_string());
+                self.data.insert(env.to_string(), hm);
+            }
+        }
     }
 }
