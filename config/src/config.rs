@@ -90,7 +90,6 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand_chacha::rand_core::SeedableRng;
 
     #[test]
     fn test_config() {
