@@ -38,12 +38,12 @@ fn main() {
     let cli = Cli::parse();
     match cli.command {
         Some(Commands::Export { env, enc }) => {
-            let cfg = Config::load(Some(&enc), None).unwrap();
+            let cfg = Config::load(Some(enc), None).unwrap();
             let result = cfg.export(&env).unwrap();
             println!("{}", result);
         }
         Some(Commands::Encrypt { env, raw, enc }) => {
-            let mut cfg = Config::load(None, Some(&raw)).unwrap();
+            let mut cfg = Config::load(enc.clone(), Some(raw.clone())).unwrap();
             cfg.apply(env).unwrap();
             let out = enc.unwrap_or_else(|| util::out_path(&raw));
             cfg.save(&out).unwrap();

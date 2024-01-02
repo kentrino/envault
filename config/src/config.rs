@@ -17,16 +17,16 @@ impl Config {
     }
 
     pub fn load(
-        encoded_path: Option<&str>,
-        decoded_path: Option<&str>,
+        encoded_path: Option<String>,
+        decoded_path: Option<String>,
     ) -> Result<Self, ConfigError> {
         Ok(Config {
             encoded: match encoded_path {
-                Some(path) => Some(File::load(path)?),
+                Some(path) => Some(File::load(&path)?),
                 None => None,
             },
             decoded: match decoded_path {
-                Some(path) => Some(File::load(path)?),
+                Some(path) => Some(File::load(&path)?),
                 None => None,
             },
         })

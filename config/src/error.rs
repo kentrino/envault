@@ -2,8 +2,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ConfigError {
-    #[error("Yaml parse failed")]
-    YamlParseFailed(#[from] serde_yaml::Error),
+    #[error("Yaml conversion failed")]
+    YamlConversionFailed(#[from] serde_yaml::Error),
 
     #[error("Environment variable is not found")]
     KeyNotFound,
@@ -14,6 +14,6 @@ pub enum ConfigError {
     #[error("Illegal state")]
     IllegalState,
 
-    #[error("IO error")]
-    FileSaveError(#[from] std::io::Error),
+    #[error("File save/open error")]
+    FileError(#[from] std::io::Error),
 }
