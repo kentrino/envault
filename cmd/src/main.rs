@@ -19,7 +19,7 @@ enum Commands {
         env: String,
 
         #[arg(short = 'c', long = "enc", help = "Encrypted file")]
-        enc: String
+        enc: String,
     },
     #[command(about = "encrypt environment variable", name = "enc")]
     Encrypt {
@@ -42,11 +42,7 @@ fn main() {
             let result = cfg.export(&env).unwrap();
             println!("{}", result);
         }
-        Some(Commands::Encrypt {
-            env,
-                 raw,
-                 enc,
-        }) => {
+        Some(Commands::Encrypt { env, raw, enc }) => {
             let mut cfg = Config::load(None, Some(&raw)).unwrap();
             cfg.apply(env).unwrap();
             let out = enc.unwrap_or_else(|| util::out_path(&raw));

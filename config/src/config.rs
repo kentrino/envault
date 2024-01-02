@@ -2,6 +2,7 @@ use crate::env::key_for;
 use crate::error::ConfigError;
 use crate::file::File;
 use cipher::aes::{decrypt, encrypt};
+#[allow(unused_imports)]
 use rand::{Rng, SeedableRng};
 use std::collections::HashMap;
 
@@ -15,7 +16,10 @@ impl Config {
         Config { encoded, decoded }
     }
 
-    pub fn load(encoded_path: Option<&str>, decoded_path: Option<&str>) -> Result<Self, ConfigError> {
+    pub fn load(
+        encoded_path: Option<&str>,
+        decoded_path: Option<&str>,
+    ) -> Result<Self, ConfigError> {
         Ok(Config {
             encoded: match encoded_path {
                 Some(path) => Some(File::load(path)?),
@@ -107,9 +111,7 @@ mod tests {
                 assert_eq!(key, "a");
                 assert_eq!(value, "old_value");
             });
-        config
-            .apply(None)
-            .unwrap();
+        config.apply(None).unwrap();
         config
             .encoded
             .unwrap()

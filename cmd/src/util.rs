@@ -14,7 +14,7 @@ pub fn out_path(input: &str) -> String {
         .unwrap()
         .to_str()
         .unwrap();
-    if dirname == "" {
+    if dirname.is_empty() {
         return format!("{}.enc.{}", basename, ext);
     }
     format!("{}/{}.enc.{}", dirname, basename, ext)
