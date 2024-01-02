@@ -5,7 +5,7 @@ use config::config::Config;
 use std::process::exit;
 
 #[derive(Parser)]
-#[command(name = "envalut")]
+#[command(name = "envault")]
 pub struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
