@@ -127,7 +127,7 @@ mod tests {
     fn test_export() {
         std::env::set_var("ENV_KEY__prd__a", "password");
         let new = vec![("prd", "a", "U2FsdGVkX19Wak5BUmlqM6K9BRN7rxlC2+NUsA+Qo4k=")];
-        let config = Config::new(None, Some(File::new(to_hash_map(new))));
+        let config = Config::new(Some(File::new(to_hash_map(new))), None);
         let res = config.export("prd").unwrap();
         assert_eq!(res, "export a=new_value;");
     }
