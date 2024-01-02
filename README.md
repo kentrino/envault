@@ -26,5 +26,12 @@ export ENV_KEY=password
 ## 4. Encrypt yaml
 
 ```shell
-envault encrypt --in .env.yaml --out .env.enc.yaml --env staging
+envault encrypt --raw .env.yaml [--enc .env.enc.yaml [--env staging]]
+```
+
+
+## 5. Load environment variables to export
+
+```shell
+envault export --enc .env.enc.yaml --env staging
 ```
