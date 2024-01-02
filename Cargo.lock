@@ -169,8 +169,8 @@ checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 name = "cmd"
 version = "0.1.0"
 dependencies = [
- "cipher 0.1.0",
  "clap",
+ "config",
 ]
 
 [[package]]
@@ -178,6 +178,18 @@ name = "colorchoice"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
+
+[[package]]
+name = "config"
+version = "0.1.0"
+dependencies = [
+ "cipher 0.1.0",
+ "once_cell",
+ "rand",
+ "rand_chacha",
+ "serde_yaml",
+ "thiserror",
+]
 
 [[package]]
 name = "cpufeatures"
@@ -553,15 +565,3 @@ name = "windows_x86_64_msvc"
 version = "0.52.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dff9641d1cd4be8d1a070daf9e3773c5f67e78b4d9d42263020c057706765c04"
-
-[[package]]
-name = "yaml"
-version = "0.1.0"
-dependencies = [
- "cipher 0.1.0",
- "once_cell",
- "rand",
- "rand_chacha",
- "serde_yaml",
- "thiserror",
-]

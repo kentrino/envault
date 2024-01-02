@@ -2,10 +2,10 @@ use crate::env::key_for;
 use crate::error::ConfigError;
 use crate::file::File;
 use cipher::aes::{decrypt, encrypt};
-use rand::Rng;
+use rand::{Rng, SeedableRng};
 use std::collections::HashMap;
 
-struct Config {
+pub struct Config {
     pub encoded: Option<File>,
     pub decoded: Option<File>,
 }
@@ -15,7 +15,7 @@ impl Config {
         Config { encoded, decoded }
     }
 
-    fn load(encoded_path: Option<&str>, decoded_path: Option<&str>) -> Result<Self, ConfigError> {
+    pub fn load(encoded_path: Option<&str>, decoded_path: Option<&str>) -> Result<Self, ConfigError> {
         Ok(Config {
             encoded: match encoded_path {
                 Some(path) => Some(File::load(path)?),
@@ -28,7 +28,7 @@ impl Config {
         })
     }
 
-    fn save(&self, encoded_path: &str) -> Result<(), ConfigError> {
+    pub fn save(&self, encoded_path: &str) -> Result<(), ConfigError> {
         if let Some(encoded) = &self.encoded {
             encoded.save(encoded_path)?;
             Ok(())
@@ -37,10 +37,10 @@ impl Config {
         }
     }
 
-    fn export(&self, env: &str) -> Result<String, ConfigError> {
+    pub fn export(&self, env: &str) -> Result<String, ConfigError> {
         let mut result = String::new();
-        if let Some(decoded) = &self.decoded {
-            for (_env, key, value) in decoded.iter() {
+        if let Some(encoded) = &self.encoded {
+            for (_env, key, value) in encoded.iter() {
                 if env == _env {
                     let password = key_for(_env, key)?;
                     result.push_str(&format!("export {}={};", key, decrypt(value, &password)?));
@@ -50,20 +50,30 @@ impl Config {
         Ok(result)
     }
 
-    fn apply<R: Rng>(&mut self, rng: &mut R) -> Result<(), ConfigError> {
+    pub fn apply(&mut self, env: Option<String>) -> Result<(), ConfigError> {
+        #[cfg(test)]
+        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(10);
+        #[cfg(not(test))]
+        let mut rng = rand::thread_rng();
+
         if let Some(decoded) = &self.decoded {
-            for (env, key, value) in decoded.iter() {
-                let password = key_for(env, key)?;
-                let encrypted = encrypt(value, &password, rng)?;
+            for (_env, key, value) in decoded.iter() {
+                if let Some(env) = env.clone() {
+                    if env != _env {
+                        continue;
+                    }
+                }
+                let password = key_for(_env, key)?;
+                let encrypted = encrypt(value, &password, &mut rng)?;
                 match &mut self.encoded {
                     Some(ref mut encoded) => {
-                        encoded.set(env, key, &encrypted);
+                        encoded.set(_env, key, &encrypted);
                     }
                     None => {
                         let mut root = HashMap::new();
                         let mut child = HashMap::new();
                         child.insert(key.to_string(), encrypted);
-                        root.insert(env.to_string(), child);
+                        root.insert(_env.to_string(), child);
                         self.encoded = Some(File::new(root));
                     }
                 }
@@ -98,7 +108,7 @@ mod tests {
                 assert_eq!(value, "old_value");
             });
         config
-            .apply(&mut rand_chacha::ChaCha8Rng::seed_from_u64(10))
+            .apply(None)
             .unwrap();
         config
             .encoded
