@@ -1,5 +1,5 @@
-mod aes;
-mod error;
+pub mod aes;
+pub mod error;
 mod pbkdf2;
 
 pub fn add(left: usize, right: usize) -> usize {

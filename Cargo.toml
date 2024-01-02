@@ -2,5 +2,5 @@
 resolver = "2"
 
 members = [
-    "cipher", "cmd",
+    "cipher", "cmd", "config"
 ]

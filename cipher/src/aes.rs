@@ -9,7 +9,6 @@ use rand::Rng;
 
 const SALTED_MAGIC: &[u8] = b"Salted__";
 
-#[allow(dead_code)]
 pub fn decrypt(ciphertext: &str, key: &str) -> Result<String, CipherError> {
     base64
         .decode(ciphertext.as_bytes())
@@ -34,18 +33,22 @@ pub fn decrypt_bytes(ciphertext: &[u8], key: &str) -> Result<String, CipherError
     String::from_utf8(res).map_err(CipherError::InvalidUtf8Encoding)
 }
 
-#[allow(dead_code)]
-pub fn encrypt(plaintext: &str, key: &str) -> Result<String, CipherError> {
-    let message = encrypt_bytes(plaintext, key)?;
+pub fn encrypt<R: Rng>(plaintext: &str, key: &str, rng: &mut R) -> Result<String, CipherError> {
+    let message = encrypt_bytes(plaintext, key, rng)?;
     Ok(base64.encode(message))
 }
 
-pub fn encrypt_bytes(plaintext: &str, key: &str) -> Result<Vec<u8>, CipherError> {
-    let salt: String = rand::thread_rng()
+pub fn encrypt_bytes<R: Rng>(
+    plaintext: &str,
+    key: &str,
+    rng: &mut R,
+) -> Result<Vec<u8>, CipherError> {
+    let salt: String = rng
         .sample_iter(&Alphanumeric)
         .take(8)
         .map(char::from)
         .collect();
+
     let (key, iv) = key_and_iv(key.as_bytes(), salt.as_bytes())?;
     let cipher = cbc::Encryptor::<aes::Aes256>::new_from_slices(&key, &iv)?;
     let plaintext = plaintext.as_bytes().to_vec();
@@ -56,14 +59,29 @@ pub fn encrypt_bytes(plaintext: &str, key: &str) -> Result<Vec<u8>, CipherError>
 #[cfg(test)]
 mod test {
     use super::*;
+    use rand::thread_rng;
+    use rand_chacha::rand_core::SeedableRng;
 
     #[test]
     fn test_encrypt_decrypt() {
         let key = "password";
         let plaintext = "Hello, world!";
-        let ciphertext = encrypt(plaintext, key).unwrap();
+        let ciphertext = encrypt(plaintext, key, &mut thread_rng()).unwrap();
         let decrypted = decrypt(&ciphertext, key).unwrap();
         assert_eq!(plaintext, decrypted);
+    }
+
+    #[test]
+    fn test_encrypt() {
+        let password = "test";
+        let plaintext = "test";
+        let encrypted = encrypt(
+            plaintext,
+            password,
+            &mut rand_chacha::ChaCha8Rng::seed_from_u64(10),
+        )
+        .unwrap();
+        assert_eq!(encrypted, "U2FsdGVkX19Wak5BUmlqMxLr7IxaMTjyOObe/snFRY4=");
     }
 
     #[test]
