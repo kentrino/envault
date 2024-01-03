@@ -1,10 +1,11 @@
-use crate::env::key_for;
-use crate::error::ConfigError;
-use crate::file::File;
-use envault_cipher::aes::{decrypt, encrypt};
+
+use crate::cipher::aes::{decrypt, encrypt};
 #[allow(unused_imports)]
 use rand::{Rng, SeedableRng};
 use std::collections::HashMap;
+use crate::processor::env::key_for;
+use crate::processor::error::ConfigError;
+use crate::processor::file::File;
 
 pub struct Config {
     pub encoded: Option<File>,

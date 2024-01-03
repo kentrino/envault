@@ -190,34 +190,17 @@ dependencies = [
 name = "envault"
 version = "0.0.2"
 dependencies = [
- "clap",
- "envault-processor",
-]
-
-[[package]]
-name = "envault-cipher"
-version = "0.0.1"
-dependencies = [
  "aes",
  "base64",
  "cbc",
+ "clap",
  "hmac",
+ "once_cell",
  "pbkdf2",
  "rand",
  "rand_chacha",
- "sha2",
- "thiserror",
-]
-
-[[package]]
-name = "envault-processor"
-version = "0.0.1"
-dependencies = [
- "envault-cipher",
- "once_cell",
- "rand",
- "rand_chacha",
  "serde_yaml",
+ "sha2",
  "thiserror",
 ]
 

@@ -1,5 +1,5 @@
-use crate::error::ConfigError;
 use std::collections::HashMap;
+use crate::processor::error::ConfigError;
 
 #[allow(dead_code)]
 #[derive(Clone)]
