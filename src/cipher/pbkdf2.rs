@@ -1,7 +1,7 @@
+use crate::cipher::error::CipherError;
 use hmac::Hmac;
 use pbkdf2::pbkdf2;
 use sha2::Sha256;
-use crate::cipher::error::CipherError;
 
 pub fn key_and_iv(password: &[u8], salt: &[u8]) -> Result<(Vec<u8>, Vec<u8>), CipherError> {
     let mut out = [0u8; 48];

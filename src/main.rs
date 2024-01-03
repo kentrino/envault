@@ -1,6 +1,6 @@
-mod util;
-mod processor;
 mod cipher;
+mod processor;
+mod util;
 
 use clap::{Parser, Subcommand};
 use processor::config::Config;
