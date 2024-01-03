@@ -27,9 +27,10 @@ where
         }
     }
 
-    match panic::catch_unwind(|| {
+    let block = || {
         closure();
-    }) {
+    };
+    match panic::catch_unwind(block) {
         Ok(_) => {
             for (k, v) in old_kvs {
                 reset_env(k, v);
