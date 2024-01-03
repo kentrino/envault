@@ -1,7 +1,7 @@
 [package]
 name = "envault"
 description = "A tool for managing secrets"
-version = "0.0.1"
+version = "0.0.2"
 repository = "https://github.com/kentrino/envault"
 authors = ["Kento Haneda <kento@hane.dad>"]
 edition = "2021"
@@ -15,5 +15,5 @@ test = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-config = { path = "../config", version = "0.0.1" }
+envault-processor = { path = "../processor", version = "0.0.1" }
 clap = { version = "4.4.12", features = ["derive"] }

@@ -9,7 +9,7 @@ pub enum ConfigError {
     KeyNotFound,
 
     #[error("Cipher error")]
-    CipherError(#[from] cipher::error::CipherError),
+    CipherError(#[from] envault_cipher::error::CipherError),
 
     #[error("Illegal state")]
     IllegalState,

@@ -9,7 +9,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac1f845298e95f983ff1944b728ae08b8cebab80d684f0a832ed0fc74dfa27e2"
 dependencies = [
  "cfg-if",
- "cipher 0.4.4",
+ "cipher",
  "cpufeatures",
 ]
 
@@ -91,7 +91,7 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26b52a9543ae338f279b96b0b9fed9c8093744685043739079ce85cd58f289a6"
 dependencies = [
- "cipher 0.4.4",
+ "cipher",
 ]
 
 [[package]]
@@ -99,21 +99,6 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
-
-[[package]]
-name = "cipher"
-version = "0.0.1"
-dependencies = [
- "aes",
- "base64",
- "cbc",
- "hmac",
- "pbkdf2",
- "rand",
- "rand_chacha",
- "sha2",
- "thiserror",
-]
 
 [[package]]
 name = "cipher"
@@ -172,18 +157,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
-name = "config"
-version = "0.0.1"
-dependencies = [
- "cipher 0.0.1",
- "once_cell",
- "rand",
- "rand_chacha",
- "serde_yaml",
- "thiserror",
-]
-
-[[package]]
 name = "cpufeatures"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -215,10 +188,37 @@ dependencies = [
 
 [[package]]
 name = "envault"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "clap",
- "config",
+ "envault-processor",
+]
+
+[[package]]
+name = "envault-cipher"
+version = "0.0.1"
+dependencies = [
+ "aes",
+ "base64",
+ "cbc",
+ "hmac",
+ "pbkdf2",
+ "rand",
+ "rand_chacha",
+ "sha2",
+ "thiserror",
+]
+
+[[package]]
+name = "envault-processor"
+version = "0.0.1"
+dependencies = [
+ "envault-cipher",
+ "once_cell",
+ "rand",
+ "rand_chacha",
+ "serde_yaml",
+ "thiserror",
 ]
 
 [[package]]

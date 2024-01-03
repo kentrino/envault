@@ -1,7 +1,7 @@
 use crate::env::key_for;
 use crate::error::ConfigError;
 use crate::file::File;
-use cipher::aes::{decrypt, encrypt};
+use envault_cipher::aes::{decrypt, encrypt};
 #[allow(unused_imports)]
 use rand::{Rng, SeedableRng};
 use std::collections::HashMap;

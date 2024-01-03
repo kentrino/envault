@@ -1,7 +1,7 @@
 mod util;
 
 use clap::{Parser, Subcommand};
-use config::config::Config;
+use envault_processor::config::Config;
 use std::process::exit;
 
 #[derive(Parser)]
