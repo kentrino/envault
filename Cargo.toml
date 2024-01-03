@@ -1,12 +1,3 @@
-[package]
-name = "envault"
-description = "A tool for managing secrets"
-version = "0.0.1"
-repository = "https://github.com/kentrino/envault"
-authors = ["Kento Haneda <kento@hane.dad>"]
-edition = "2021"
-license = "MIT"
-
 [workspace]
 resolver = "2"
 
