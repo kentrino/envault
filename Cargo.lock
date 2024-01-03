@@ -188,7 +188,7 @@ dependencies = [
 
 [[package]]
 name = "envault"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "aes",
  "base64",
