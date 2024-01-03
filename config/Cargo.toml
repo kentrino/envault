@@ -1,10 +1,10 @@
 [package]
 name = "config"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-cipher = { path = "../cipher" }
+cipher = { path = "../cipher", version = "0.0.1" }
 
 serde_yaml = "0.9.29"
 thiserror = "1.0.52"
