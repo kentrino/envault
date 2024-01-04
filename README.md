@@ -1,5 +1,5 @@
 # What is this
-"envault" /ɪnˈvɔːlt/ is for encrypting confidential information such as API keys and managing them in a version control system.
+"envault" /ɪnˈvɔːlt/ is a tool for encrypting confidential information such as API keys and managing them in a version control system.
 
 # How to use
 ## 1. Install
