@@ -1,7 +1,9 @@
+mod cipher;
+mod processor;
 mod util;
 
 use clap::{Parser, Subcommand};
-use config::config::Config;
+use processor::config::Config;
 use std::process::exit;
 
 #[derive(Parser)]

@@ -1,3 +1,4 @@
+use crate::cipher::error::CipherError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -9,7 +10,7 @@ pub enum ConfigError {
     KeyNotFound,
 
     #[error("Cipher error")]
-    CipherError(#[from] cipher::error::CipherError),
+    CipherError(#[from] CipherError),
 
     #[error("Illegal state")]
     IllegalState,

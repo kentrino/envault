@@ -1,4 +1,4 @@
-use crate::error::CipherError;
+use crate::cipher::error::CipherError;
 use hmac::Hmac;
 use pbkdf2::pbkdf2;
 use sha2::Sha256;

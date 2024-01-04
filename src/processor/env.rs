@@ -1,4 +1,4 @@
-use crate::error::ConfigError;
+use crate::processor::error::ConfigError;
 
 const PREFIX: &str = "ENV_KEY";
 
@@ -17,8 +17,8 @@ pub fn key_for(_env: &str, _key: &str) -> Result<String, ConfigError> {
 
 #[cfg(test)]
 mod tests {
-    use crate::env::key_for;
-    use crate::with_env_vars::with_env_vars;
+    use crate::processor::env::key_for;
+    use crate::processor::with_env_vars::with_env_vars;
 
     #[test]
     fn with_root_password() {

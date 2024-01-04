@@ -1,4 +1,4 @@
-use crate::error::ConfigError;
+use crate::processor::error::ConfigError;
 use std::collections::HashMap;
 
 #[allow(dead_code)]
