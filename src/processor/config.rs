@@ -46,7 +46,7 @@ impl Config {
         if let Some(encoded) = &self.encoded {
             for (_env, key, value) in encoded.iter() {
                 if env == _env {
-                    let password = key_for(_env, key)?;
+                    let (_, password) = key_for(_env, key)?;
                     result.push_str(&format!("export {}={};", key, decrypt(value, &password)?));
                 }
             }
@@ -67,7 +67,7 @@ impl Config {
                         continue;
                     }
                 }
-                let password = key_for(_env, key)?;
+                let (_, password) = key_for(_env, key)?;
                 let encrypted = encrypt(value, &password, &mut rng)?;
                 match &mut self.encoded {
                     Some(ref mut encoded) => {

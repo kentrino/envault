@@ -2,15 +2,18 @@ use crate::processor::error::ConfigError;
 
 const PREFIX: &str = "ENV_KEY";
 
-pub fn key_for(_env: &str, _key: &str) -> Result<String, ConfigError> {
-    if let Ok(value) = std::env::var(PREFIX.to_string() + "__" + _env + "__" + _key) {
-        return Ok(value);
+pub fn key_for(_env: &str, _key: &str) -> Result<(String, String), ConfigError> {
+    let mut name = PREFIX.to_string() + "__" + _env + "__" + _key;
+    if let Ok(value) = std::env::var(&name) {
+        return Ok((name.to_string(), value));
     }
-    if let Ok(value) = std::env::var(PREFIX.to_string() + "__" + _env) {
-        return Ok(value);
+    name = PREFIX.to_string() + "__" + _env;
+    if let Ok(value) = std::env::var(&name) {
+        return Ok((name.to_string(), value));
     }
+    name = PREFIX.to_string();
     match std::env::var(PREFIX) {
-        Ok(value) => Ok(value),
+        Ok(value) => Ok((name, value)),
         Err(_) => Err(ConfigError::KeyNotFound),
     }
 }
@@ -23,7 +26,7 @@ mod tests {
     #[test]
     fn with_root_password() {
         with_env_vars(vec![("ENV_KEY", Some("password1"))], || {
-            let password = key_for("dev", "a").unwrap();
+            let (_, password) = key_for("dev", "a").unwrap();
             assert_eq!(password, "password1");
         })
     }
@@ -36,7 +39,7 @@ mod tests {
                 ("ENV_KEY__dev", Some("password2")),
             ],
             || {
-                let password = key_for("dev", "a").unwrap();
+                let (_, password) = key_for("dev", "a").unwrap();
                 assert_eq!(password, "password2");
             },
         )
@@ -51,7 +54,7 @@ mod tests {
                 ("ENV_KEY__dev__a", Some("password3")),
             ],
             || {
-                let password = key_for("dev", "a").unwrap();
+                let (_, password) = key_for("dev", "a").unwrap();
                 assert_eq!(password, "password3");
             },
         )
