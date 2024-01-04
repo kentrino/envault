@@ -15,19 +15,19 @@ jobs:
         rust: [stable]
         include:
           - os: macos-latest
-            artifact_prefix: macos-x86_64
+            artifact_prefix: x86_64-apple-darwin
             target: x86_64-apple-darwin
             binary_postfix: ""
-          - os: macos-13-arm64
-            artifact_prefix: macos-arm64
+          - os: macos-latest
+            artifact_prefix: aarch64-apple-darwin
             target: aarch64-apple-darwin
             binary_postfix: ""
           - os: ubuntu-latest
-            artifact_prefix: linux
+            artifact_prefix: x86_64-unknown-linux-gnu
             target: x86_64-unknown-linux-gnu
             binary_postfix: ""
           - os: windows-latest
-            artifact_prefix: windows
+            artifact_prefix: x86_64-pc-windows-msvc
             target: x86_64-pc-windows-msvc
             binary_postfix: ".exe"
 
@@ -70,7 +70,7 @@ jobs:
     name: Publishing to Cargo
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
