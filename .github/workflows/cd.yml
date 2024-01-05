@@ -15,19 +15,15 @@ jobs:
         rust: [stable]
         include:
           - os: macos-latest
-            artifact_prefix: macos-x86_64
             target: x86_64-apple-darwin
             binary_postfix: ""
-          - os: macos-13-arm64
-            artifact_prefix: macos-arm64
+          - os: macos-latest
             target: aarch64-apple-darwin
             binary_postfix: ""
           - os: ubuntu-latest
-            artifact_prefix: linux
             target: x86_64-unknown-linux-gnu
             binary_postfix: ""
           - os: windows-latest
-            artifact_prefix: windows
             target: x86_64-pc-windows-msvc
             binary_postfix: ".exe"
 
@@ -51,18 +47,18 @@ jobs:
         run: |
           cd target/${{ matrix.target }}/release
           strip envault${{ matrix.binary_postfix }}
-          tar czvf envault-${{ matrix.artifact_prefix }}.tar.gz envault${{ matrix.binary_postfix }}
+          tar czvf envault-${{ matrix.target }}.tar.gz envault${{ matrix.binary_postfix }}
           if [[ ${{ runner.os }} == 'Windows' ]]; then
-            certutil -hashfile envault-${{ matrix.artifact_prefix }}.tar.gz sha256 | grep -E [A-Fa-f0-9]{64} > envault-${{ matrix.artifact_prefix }}.sha256
+            certutil -hashfile envault-${{ matrix.target }}.tar.gz sha256 | grep -E [A-Fa-f0-9]{64} > envault-${{ matrix.target }}.sha256
           else
-            shasum -a 256 envault-${{ matrix.artifact_prefix }}.tar.gz > envault-${{ matrix.artifact_prefix }}.sha256
+            shasum -a 256 envault-${{ matrix.target }}.tar.gz > envault-${{ matrix.target }}.sha256
           fi
       - name: Releasing assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/${{ matrix.target }}/release/envault-${{ matrix.artifact_prefix }}.tar.gz
-            target/${{ matrix.target }}/release/envault-${{ matrix.artifact_prefix }}.sha256
+            target/${{ matrix.target }}/release/envault-${{ matrix.target }}.tar.gz
+            target/${{ matrix.target }}/release/envault-${{ matrix.target }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -70,7 +66,7 @@ jobs:
     name: Publishing to Cargo
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
